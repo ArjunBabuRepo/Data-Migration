@@ -197,10 +197,7 @@ public class Incremental_load2 {
 		ResultSet resultSet2 = null;
 		try {
 			destination = getConnection();
-			DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.ENGLISH);
-			Calendar cal = Calendar.getInstance();
-			LastRunnedTime = dateFormat.format(cal.getTime());
-			System.out.println("Last Runned Time = " + LastRunnedTime);
+
 
 			QueryResult queryResults1 = connection.query("select Id from RecordType where LastModifiedDate >=" + LastRunnedTime);
 			if (queryResults1.getSize() > 0) {
@@ -228,6 +225,12 @@ public class Incremental_load2 {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
+			
+			DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.ENGLISH);
+			Calendar cal = Calendar.getInstance();
+			LastRunnedTime = dateFormat.format(cal.getTime());
+			System.out.println("Last Runned Time = " + LastRunnedTime);
+			
 			if (preparedStatement3 != null) {
 				try {
 					preparedStatement3.close();
@@ -249,20 +252,7 @@ public class Incremental_load2 {
 					e.printStackTrace();
 				}
 			}
-			if (resultSet1 != null) {
-				try {
-					resultSet1.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-			if (preparedStatement1 != null) {
-				try {
-					preparedStatement1.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
+
 			if (destination != null) {
 				try {
 					destination.close();
