@@ -112,7 +112,7 @@ public class Incremental_load2 {
 				
 				USERNAME2= properties.getProperty("username2");
 				PASSWORD2= properties.getProperty("password2");
-				LastRunTime=
+				LastRunTime=properties.getProperty("LastRunnedTime");
 				
 				
 				
@@ -274,52 +274,115 @@ public class Incremental_load2 {
 		}
 	}
 
-	public static void queryRecordType(String yeah) {
-		try {
-			QueryResult queryResults = connection
-					.query("Select  Id, Name,DeveloperName, NamespacePrefix, Description, BusinessProcessId,SobjectType,IsActive, CreatedById,CreatedDate,LastModifiedById, LastModifiedDate, SystemModstamp FROM RecordType  where id = '"
-							+ yeah + "'");
-			if (queryResults.getSize() > 0) {
-				for (int i = 0; i < queryResults.getRecords().length; i++) {
-					RecordType c = (RecordType) queryResults.getRecords()[i];
-					String Id = c.getId();
+	
+	
+		private static void queryRecordType(String yeah) {
+	   // System.out.println("Querying for the 5 newest Contacts...");
+		Connection connection1 = null;
+		PreparedStatement preparedStatement = null;
+	    try {
+	    	connection1 = getConnection();
+			preparedStatement = connection1.prepareStatement("Truncate Table RECORDTYPE");
+			preparedStatement.executeUpdate();
+	      // query for the 5 newest contacts     
 
-					String Name = c.getName();
+	      QueryResult queryResults = connection.query("Select  Id, Name,DeveloperName, NamespacePrefix, Description, BusinessProcessId,SobjectType,IsActive, CreatedById,CreatedDate,LastModifiedById, LastModifiedDate, SystemModstamp FROM RecordType where id = '"+ yeah + "'");
+	      if (queryResults.getSize() > 0) {
+	    	  for (int i=0;i<queryResults.getRecords().length;i++) 
+	    	  {
+	    		  RecordType c = (RecordType)queryResults.getRecords()[i];
+	    		  String Id=c.getId();
+	    		  
+	    		  String Name=c.getName();
+	    		  
+	    		  String DeveloperName=c.getDeveloperName();
+	    		  
+	    		  String NamespacePrefix=c.getNamespacePrefix();
+	    		  String  Description=c.getDescription();
+	    		  String  BusinessProcessId=c.getBusinessProcessId();
+	    		  String SobjectType=c.getSobjectType();
+	    		  Boolean IsActive=c.getIsActive();
+	    		  String CreatedById=c.getCreatedById();
+	    		  
+	    		  Calendar CreatedDate_1=c.getCreatedDate();
+	    		  Timestamp  CreatedDate=getEmptyTimestamp( CreatedDate_1 );
+	    		  
+	    		  String LastModifiedById=c.getLastModifiedById();
+	    		  
+	    		  Calendar LastModifiedDate_1=c.getLastModifiedDate();
+	    		  Timestamp LastModifiedDate=getEmptyTimestamp(LastModifiedDate_1);
+	    		  
+	    		  Calendar SystemModstamp_1=c.getSystemModstamp();
+	    		  Timestamp SystemModstamp=getEmptyTimestamp(SystemModstamp_1);
+	    		  
+	    		 Insert_queryRecordType(Id,Name,DeveloperName,NamespacePrefix,Description, BusinessProcessId,SobjectType,IsActive,CreatedById,CreatedDate,LastModifiedById,LastModifiedDate,SystemModstamp);
+	    		  System.out.println(""Inserting Id: "  +Id +"Name: " + Name+"DeveloperName: " +DeveloperName+"NamespacePrefix: " + NamespacePrefix+" Description: " +  Description+" "+"BusinessProcessId" +BusinessProcessId+"SobjectType: " +SobjectType+"IsActive: " +IsActive+
+				  			"CreatedById: " +CreatedById+" CreatedDate"+ CreatedDate+"LastModifiedById"+LastModifiedById+"LastModifiedDate"+LastModifiedDate+"SystemModstamp: " +SystemModstamp);
+	    		  
+	    		  System.out.println();
+	    	  }
+	
 
-					String DeveloperName = c.getDeveloperName();
-
-					String NamespacePrefix = c.getNamespacePrefix();
-					String Description = c.getDescription();
-					String BusinessProcessId = c.getBusinessProcessId();
-					String SobjectType = c.getSobjectType();
-					Boolean IsActive = c.getIsActive();
-					String CreatedById = c.getCreatedById();
-
-					Calendar CreatedDate_1 = c.getCreatedDate();
-					String CreatedDate = getEmptyDate(CreatedDate_1);
-
-					String LastModifiedById = c.getLastModifiedById();
-
-					Calendar LastModifiedDate_1 = c.getLastModifiedDate();
-					String LastModifiedDate = getEmptyDate(LastModifiedDate_1);
-
-					Calendar SystemModstamp_1 = c.getSystemModstamp();
-					String SystemModstamp = getEmptyDate(SystemModstamp_1);
-
-					Insert_queryRecordType(Id, Name, DeveloperName, NamespacePrefix, Description, BusinessProcessId, SobjectType, IsActive, CreatedById, CreatedDate,
-							LastModifiedById, LastModifiedDate, SystemModstamp);
-					System.out.println("Inserting Id: " + Id + "Name: " + Name + "DeveloperName: " + DeveloperName + "NamespacePrefix: " + NamespacePrefix + " Description: " + Description
-							+ " " + "BusinessProcessId" + BusinessProcessId + "SobjectType: " + SobjectType + "IsActive: " + IsActive + "CreatedById: " + CreatedById
-							+ " CreatedDate" + CreatedDate + "LastModifiedById" + LastModifiedById + "LastModifiedDate" + LastModifiedDate + "SystemModstamp: " + SystemModstamp);
-					System.out.println();
-				}
-
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.exit(1);
-		}
+	    }
+	    }
+	    catch (Exception e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+	    }
+	
+	
+	public static void Insert_queryRecordType( String Id,String Name,String DeveloperName,String NamespacePrefix, String  Description,String  BusinessProcessId, 
+			  String SobjectType,Boolean IsActive, String CreatedById, Timestamp  CreatedDate,String LastModifiedById,Timestamp LastModifiedDate,Timestamp SystemModstamp)
+	{
+		Connection target = null;
+	    PreparedStatement preparedStatement = null;
+	    
+	    try{
+	    	target = getConnection();
+	    	preparedStatement =  target.prepareStatement("INSERT INTO RECORDTYPE(NAME,DEVELOPERNAME,NAMESPACEPREFIX,DESCRIPTION,BUSINESSPROCESSID,SOBJECTTYPE,ISACTIVE,CREATEDBYID,CREATEDDATE,LASTMODIFIEDBYID,LASTMODIFIEDDATE,SYSTEMMODSTAMP,ID)VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)");
+	    	   	
+	    	preparedStatement.setString(1, Name);
+	    	preparedStatement.setString(2,DeveloperName);
+	    	preparedStatement.setString(3,NamespacePrefix);
+	    	preparedStatement.setString(4,Description);
+	    	preparedStatement.setString(5,BusinessProcessId);
+	    	preparedStatement.setString(6,SobjectType);
+	    	preparedStatement.setBoolean(7,IsActive);
+	    	preparedStatement.setString(8,CreatedById);
+	    	preparedStatement.setTimestamp(9,CreatedDate);
+	    	preparedStatement.setString(10,LastModifiedById);
+	    	preparedStatement.setTimestamp(11,LastModifiedDate);
+	    	preparedStatement.setTimestamp(12,SystemModstamp);
+	    	preparedStatement.setString(13,Id);
+	    	
+	    	preparedStatement.executeUpdate();
+	    	
 	}
+	    catch(Exception e){
+		   	 e.printStackTrace();
+		   //	 sendEmail("Shipping Schedule Database Insertion Exception",e.getMessage());
+		    }finally{
+			   	 if (preparedStatement != null) {
+			            try {
+			                preparedStatement.close();
+			            } catch (SQLException e) {
+			                e.printStackTrace();
+			            }
+			        }
+
+			        if (target != null) {
+			            try {
+			                target.close();
+			            } catch (SQLException e) {
+			                e.printStackTrace();
+			            }
+			        }
+
+			   }
+}
+
+	
 
 	public static Connection getConnection() throws IOException {
 
@@ -353,54 +416,7 @@ public class Incremental_load2 {
 		return connection;
 	}
 
-	public static void Insert_queryRecordType(String Id, String Name, String DeveloperName, String NamespacePrefix, String Description, String BusinessProcessId,
-			String SobjectType, Boolean IsActive, String CreatedById, String CreatedDate, String LastModifiedById, String LastModifiedDate, String SystemModstamp) {
-		Connection target = null;
-		PreparedStatement preparedStatement = null;
-
-		try {
-			target = getConnection();
-			preparedStatement = target
-					.prepareStatement("INSERT INTO RECORDTYPE(NAME,DEVELOPERNAME,NAMESPACEPREFIX,DESCRIPTION,BUSINESSPROCESSID,SOBJECTTYPE,ISACTIVE,CREATEDBYID,CREATEDDATE,LASTMODIFIEDBYID,LASTMODIFIEDDATE,SYSTEMMODSTAMP,ID)VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)");
-
-			preparedStatement.setString(1, Name);
-			preparedStatement.setString(2, DeveloperName);
-			preparedStatement.setString(3, NamespacePrefix);
-			preparedStatement.setString(4, Description);
-			preparedStatement.setString(5, BusinessProcessId);
-			preparedStatement.setString(6, SobjectType);
-			preparedStatement.setBoolean(7, IsActive);
-			preparedStatement.setString(8, CreatedById);
-			preparedStatement.setString(9, CreatedDate);
-			preparedStatement.setString(10, LastModifiedById);
-			preparedStatement.setString(11, LastModifiedDate);
-			preparedStatement.setString(12, SystemModstamp);
-			preparedStatement.setString(13, Id);
-
-			preparedStatement.executeUpdate();
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			// sendEmail("Shipping Schedule Database Insertion Exception",e.getMessage());
-		} finally {
-			if (preparedStatement != null) {
-				try {
-					preparedStatement.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-
-			if (target != null) {
-				try {
-					target.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-
-		}
-	}
+	
 
 	public static Double xyz(Double aaa) {
 		if (aaa == null) {
@@ -413,21 +429,30 @@ public class Incremental_load2 {
 		}
 	}
 
-	public static String getEmptyDate(Calendar dates) {
-		String formatted;
+    public static Timestamp getEmptyTimestamp(Calendar dates){
+       Timestamp formatted;
+       if(dates==null){
+    	   formatted=null;
+    	   
+       }else{
+    	   formatted=new Timestamp(dates.getTimeInMillis());
+       }
+       return formatted;
+    }
+    	 public static Date getEmptyDate(Calendar dates) throws ParseException {
+	 Date formatted=null;
 		if (dates == null) {
-			formatted = "";
+			formatted = null;
 		} else {
 
-			SimpleDateFormat format1 = new SimpleDateFormat("dd-MM-yy");
+		//	SimpleDateFormat format1 = new SimpleDateFormat("dd-MM-yyyy");
 			// System.out.println(CreatedDate.getTime());
 			// Output "Wed Sep 26 14:23:28 EST 2012"
-
-			formatted = format1.format(dates.getTime());
+            formatted=new Date(dates.getTimeInMillis());
+			//formatted = format1.parse(dates.getTimeInMillis());
 		}
 
 		return formatted;
 
 	}
-
 }
