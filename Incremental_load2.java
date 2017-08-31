@@ -16,16 +16,25 @@ import com.sforce.ws.ConnectionException;
 import com.sforce.ws.ConnectorConfig;
 
 public class Incremental_load2 {
-	static final String USERNAME = "bi@synaptics.com";
+	/*static final String USERNAME = "bi@synaptics.com";
 	// static final String USERNAME = "bi@synaptics.com";
 	static final String PASSWORD = "Syna@123OtF1EvybbSCkCExy77XradBCQ";
+	// static final String PASSWORD = "snuv1k123";*/
+	
+	static String USERNAME1;
+	static String USERNAME2;
+	static String PASSWORD1;
 	// static final String PASSWORD = "snuv1k123";
+	static String PASSWORD2;
+	static String LastRunTime;
+
 	static EnterpriseConnection connection;
 
 	public static void main(String[] args) {
+		PropertiesFile();
 		ConnectorConfig config = new ConnectorConfig();
-		config.setUsername(USERNAME);
-		config.setPassword(PASSWORD);
+		config.setUsername(USERNAME1);
+		config.setPassword(PASSWORD1);
 		config.setAuthEndpoint("https://synaptics.my.salesforce.com/services/Soap/c/36.0");
 		try {
 			connection = Connector.newConnection(config);
@@ -50,6 +59,78 @@ public class Incremental_load2 {
 
 		}
 	}
+	
+	
+	
+	public static Connection getConnection1() throws IOException{
+			 
+			final String URL = "jdbc:oracle:thin:@182.18.161.151:1523:AGDEV1";
+			
+		    /**
+		     * In my case username is "root" *
+		     */
+		    final String USERNAME = USERNAME2;
+			 
+		    /**
+		     * In my case password is "1234" *
+		     */
+		    final String PASSWORD = PASSWORD2;
+		  
+		  
+		        Connection connection = null;
+		 
+		        try {
+		        	
+		        	
+		            //Class.forName("com.mysql.jdbc.Driver");
+		        	Class.forName("oracle.jdbc.driver.OracleDriver");
+		        	
+		        	//DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
+		            connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+		        } catch (Exception e) {
+		            e.printStackTrace();
+		            System.exit(1);
+		        }
+		 
+		        return connection;
+		    }
+	
+	
+	
+	public static  void PropertiesFile()
+		{
+			try {
+				File file = new File("C:/Users/Chintamani/Desktop/Login/uinfo.properties");
+				FileInputStream fileInput = new FileInputStream(file);
+				Properties properties = new Properties();
+				properties.load(fileInput);
+				fileInput.close();
+
+				Enumeration<Object> enuKeys = properties.keys();
+				USERNAME1= properties.getProperty("username1");
+				PASSWORD1 = properties.getProperty("password1");
+				
+				USERNAME2= properties.getProperty("username2");
+				PASSWORD2= properties.getProperty("password2");
+				LastRunTime=
+				
+				
+				
+				
+				
+				/*while (enuKeys.hasMoreElements()) {
+					String key = (String) enuKeys.nextElement();
+					String value = properties.getProperty(key);
+					System.out.println(key + ": " + value);
+				}*/
+			} 
+			catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}	
+		}
+	
 
 	private static void deleteOldRows() {
 		Connection destination = null;
